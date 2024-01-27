@@ -2,3 +2,4 @@ fastapi
 uvicorn
 langchain
 openai
+langchain-openai
