@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 
 # ----------------------------------------------------------------------------
+# Overview
+# -> chain.py (this file will return a RAG result for API result)
+# ---> gen_embeddings.py (this file will generate the vector embeddings)
+# ---> gen_embeddings.py will also push data to mongoDB (incomplete)
+# we have to run embeddings before we can run chain to fetch result
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
 # imports
 # ----------------------------------------------------------------------------
 
