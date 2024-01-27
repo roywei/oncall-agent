@@ -1,0 +1,8 @@
+{
+    "incident_id": "INC123456",
+    "title": "Authentication Failure in E-commerce Store",
+    "status": "Open",
+    "severity": "High",
+    "category": "AuthFailure",
+    "date_reported": "2024-01-27T10:00:00Z"
+}
