@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from AtlasClient import AtlasClient
 
 from pydantic import BaseModel
 import logging
@@ -88,6 +89,9 @@ async def mongoDB_vector_search_fake(query):
         return f.read()
 
 async def mongoDB_vector_search(query):
+    atlas_client = AtlasClient (ATLAS_URI, DB_NAME)
+    report = atlas_client.vector_search(collection_name=COLLECTION_NAME, index_name=INDEX_NAME, attr_name='plot_embedding', embedding_vector=embedding,limit=10 )
+    atlas_client.close_connection()
     pass
 
 # ----------------------------------------------------------------------------
