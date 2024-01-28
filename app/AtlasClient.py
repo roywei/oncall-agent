@@ -36,6 +36,7 @@ class AtlasClient ():
                     'title' : 1,
                     'plot' : 1,
                     'year' : 1,
+                    'text' : 1,
                     "search_score": { "$meta": "vectorSearchScore" }
             }
             }
