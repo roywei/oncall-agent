@@ -37,8 +37,11 @@ DB_NAME = os.getenv('DB_NAME', default='devopsgpt')
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
+from OpenAIClient import OpenAIClient
+
+openAI_client = OpenAIClient (api_key=api_key)
 def gen_embedding(text: str)->List[float]:
-    return embeddings.embed_query(text)
+    return openAI_client.get_embedding(text)
 
 def store_embedding(atlas_client: AtlasClient, collection_name, v: List[float], origin: str)->None:
     result = atlas_client.insert_one(collection_name, 'report_embedding', v, origin)
