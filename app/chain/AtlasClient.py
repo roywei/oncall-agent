@@ -42,9 +42,9 @@ class AtlasClient ():
             ])
         return list(results)
 
-    def insert_one(self, collection_name, attr_name, embedding_vector):
+    def insert_one(self, collection_name, attr_name, embedding_vector, text):
         collection = self.database[collection_name]
-        result = collection.insert_one({attr_name: embedding_vector})
+        result = collection.insert_one({attr_name: embedding_vector, 'text': text})
         return result
 
     def close_connection(self):
