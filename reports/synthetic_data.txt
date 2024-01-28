@@ -1,0 +1,89 @@
+Certainly! Here are three mock app error templates similar to the one you provided:
+
+---
+
+## Title: 
+User Authentication Failure
+
+## Error Name: 
+Simulated Login Error
+
+## Stack trace
+ERROR:root:Backend Error: Login failed error | Stack: http://127.0.0.1:9000/ | Info: {}
+ERROR:root:Backend Error: Incorrect credentials | Stack: Incorrect credentials | Info: {}
+ERROR:root:Backend Error: Simulated Login Error | Stack: Error: Simulated Login Error
+    at onUserLogin (webpack-internal:///(app-server)/./services/authService.js:45:10)
+    at handleRequest (webpack-internal:///(app-server)/./controllers/authController.js:59:21)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+
+## Solution
+The current onUserLogin function is throwing a simulated error for testing purposes, leading to authentication failures. To resolve this issue, remove the artificial error generation in the onUserLogin function and ensure that the normal login process is reinstated.
+
+The file to modify: services/authService.js
+
+Correct code:
+```javascript
+try {
+    validateCredentials(username, password);
+    // Additional logic for successful authentication
+}
+```
+
+---
+
+## Title: 
+Product Details Fetching Error
+
+## Error Name: 
+Simulated Product Details Fetch Error
+
+## Stack trace
+ERROR:root:API Error: Product fetch error | Stack: http://127.0.0.1:8000/api/products/123 | Info: {}
+ERROR:root:API Error: Invalid product ID | Stack: Invalid product ID | Info: {}
+ERROR:root:API Error: Simulated Product Details Fetch Error | Stack: Error: Simulated Product Details Fetch Error
+    at fetchProductDetails (webpack-internal:///(app-server)/./api/products.js:34:11)
+    at getProductDetails (webpack-internal:///(app-server)/./controllers/productController.js:27:18)
+
+## Solution
+The fetchProductDetails function is intentionally generating a fetch error. To resolve this, remove the simulated error code and ensure the function correctly fetches product details from the database or external service.
+
+The file to modify: api/products.js
+
+Correct code:
+```javascript
+async function fetchProductDetails(productId) {
+    // Implementation to fetch and return product details
+}
+```
+
+---
+
+## Title: 
+Checkout Process Interruption
+
+## Error Name: 
+Simulated Checkout Failure
+
+## Stack trace
+ERROR:root:Checkout Error: Checkout process failure | Stack: http://127.0.0.1:8000/checkout | Info: {}
+ERROR:root:Checkout Error: Payment gateway error | Stack: Payment gateway error | Info: {}
+ERROR:root:Checkout Error: Simulated Checkout Failure | Stack: Error: Simulated Checkout Failure
+    at processCheckout (webpack-internal:///(app-client)/./pages/checkout.js:88:24)
+    at submitOrder (webpack-internal:///(app-client)/./components/checkoutForm.js:76:5)
+
+## Solution
+The checkout process is disrupted due to an intentional error in the processCheckout function. To fix this, the artificial error generation should be removed and the standard checkout flow should be reinstated.
+
+The file to modify: pages/checkout.js
+
+Correct code:
+```javascript
+try {
+    processPayment(details);
+    completeOrder(orderData);
+}
+```
+
+---
+
+These templates provide a structured way to document and troubleshoot common errors in an application, enhancing the efficiency of the development and support teams.
