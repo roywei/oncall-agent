@@ -40,10 +40,9 @@ embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 def gen_embedding(text: str)->List[float]:
     return embeddings.embed_query(text)
 
-def store_embedding(atlas_client: AtlasClient, v: List[float])->bool:
-    # connect to MongoDB
-    # insert an embedding vector
-    return True
+def store_embedding(atlas_client: AtlasClient, collection_name, v: List[float])->None:
+    result = atlas_client.insert_one(collection_name, 'report_embedding', v)
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -58,5 +57,5 @@ if __name__ == '__main__':
     v = gen_embedding(text)
     print(v[:5])
     # store embeddings
-    #store_embedding(conn, v)
+    store_embedding(atlas_client, 'embeddings', v)
     atlas_client.close_connection()
