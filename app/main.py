@@ -61,14 +61,34 @@ class FrontendError(BaseModel):
     info: dict  # Additional info if needed
 
 # Set up logging
-logging.basicConfig(filename='frontend_errors.log', level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 # Endpoint to receive and log frontend errors
 @app.post("/log-frontend-error/")
 async def log_frontend_error(error: FrontendError):
     # Log the error to a file
     logging.error(f"Frontend Error: {error.message} | Stack: {error.stack} | Info: {error.info}")
+    logging.info("Calling on-call agent...")
+    await error_handler(error.message, error.stack)
     return {"detail": "Error logged successfully"}
+
+
+async def error_handler(error_message, error_stack):
+    # Log the error to a file
+    logging.info(f"Trying to resolve error: {error_message}")
+    solution = await mongoDB_vector_search_fake(error_stack)
+    logging.info(f"Found Solution: {solution}")
+    logging.info("Found ")
+
+
+async def mongoDB_vector_search_fake(query):
+    # fake return load the file from local
+    with open("/Users/Lai/Documents/workspace/oncall-agent/reports/Add_to_cart_error.txt", "r") as f:
+        #return full file content
+        return f.read()
+
+async def mongoDB_vector_search(query):
+    pass
 
 # ----------------------------------------------------------------------------
 # enable post endpoint
