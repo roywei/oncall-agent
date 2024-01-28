@@ -42,5 +42,10 @@ class AtlasClient ():
             ])
         return list(results)
 
+    def insert_one(self, collection_name, attr_name, embedding_vector):
+        collection = self.database[collection_name]
+        result = collection.insert_one({attr_name: embedding_vector})
+        return result
+
     def close_connection(self):
         self.mongodb_client.close()
