@@ -1,0 +1,26 @@
+##Title: 
+Add to Cart Functionality Failure
+
+## Error Name: 
+Simulated Add to Cart Error
+
+
+## Stack trace
+ERROR:root:Frontend Error: fron end error | Stack: http://127.0.0.1:8000/ | Info: {}
+ERROR:root:Frontend Error: string | Stack: string | Info: {}
+ERROR:root:Frontend Error: Simulated Add to Cart Error | Stack: Error: Simulated Add to Cart Error
+    at onAddToCart (webpack-internal:///(app-client)/./components/info.tsx:21:19)
+    at HTMLUnknownElement.callCallback (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:19437:14)
+    at Object.invokeGuardedCallbackImpl (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:19486:16)
+
+## Solution
+The current onAddToCart function is intentionally throwing an error which is causing the application to crash. To resolve this issue, the simulated error throw should be removed, and the original cart.addItem(data) function call should be reinstated. This will restore the intended functionality of adding items to the shopping cart.
+
+the file to modify: components/info.tsx
+
+correct code:
+try {
+    cart.addItem(data);
+} 
+
+
