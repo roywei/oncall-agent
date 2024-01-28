@@ -86,4 +86,98 @@ try {
 
 ---
 
+```
+Title:
+
+Email Sending Error
+Error Name:
+
+Simulated Email Sending Error
+Stack trace
+
+ERROR:root:Email Sending Error: Unable to send email | Stack: http://127.0.0.1:8000/api/email/123 | Info: {}
+ERROR:root:Email Sending Error: Invalid recipient address | Stack: Invalid recipient address | Info: {}
+ERROR:root:Email Sending Error: Simulated Email Sending Error | Stack: Error: Simulated Email Sending Error
+at sendEmail (webpack-internal:///(app-server)/./api/email.js:25:12)
+at notificationController (webpack-internal:///(app-server)/./controllers/notificationController.js:19:18)
+Solution
+
+The sendEmail function is intentionally generating an email sending error. To resolve this, remove the simulated error code and ensure the function correctly sends emails to the specified recipient.
+
+The file to modify: api/email.js
+
+Correct code:
+
+javascript
+
+async function sendEmail(emailDetails) {
+    // Implementation to send an email based on emailDetails
+}
+
+```
+
+---
+
+```
+Title:
+
+Payment Processing Error
+Error Name:
+
+Simulated Payment Processing Error
+Stack trace
+
+ERROR:root:Payment Processing Error: Unable to process payment | Stack: http://127.0.0.1:8000/api/payment/123 | Info: {}
+ERROR:root:Payment Processing Error: Insufficient funds | Stack: Insufficient funds | Info: {}
+ERROR:root:Payment Processing Error: Simulated Payment Processing Error | Stack: Error: Simulated Payment Processing Error
+at processPayment (webpack-internal:///(app-server)/./api/payment.js:19:14)
+at checkoutController (webpack-internal:///(app-server)/./controllers/checkoutController.js:28:22)
+Solution
+
+The processPayment function is intentionally generating a payment processing error. To resolve this, remove the simulated error code and ensure the function correctly processes payments and handles various payment scenarios.
+
+The file to modify: api/payment.js
+
+Correct code:
+
+javascript
+
+async function processPayment(paymentDetails) {
+    // Implementation to process payment based on paymentDetails
+}
+```
+
+---
+
+```
+Title:
+
+File Upload Error
+Error Name:
+
+Simulated File Upload Error
+Stack trace
+
+ERROR:root:File Upload Error: Unable to upload file | Stack: http://127.0.0.1:8000/api/upload/123 | Info: {}
+ERROR:root:File Upload Error: Invalid file format | Stack: Invalid file format | Info: {}
+ERROR:root:File Upload Error: Simulated File Upload Error | Stack: Error: Simulated File Upload Error
+at handleFileUpload (webpack-internal:///(app-server)/./api/upload.js:28:15)
+at processFile (webpack-internal:///(app-server)/./controllers/uploadController.js:42:22)
+Solution
+
+The handleFileUpload function is intentionally generating a file upload error. To resolve this, remove the simulated error code and ensure the function correctly processes and uploads files to the specified location.
+
+The file to modify: api/upload.js
+
+Correct code:
+
+javascript
+
+async function handleFileUpload(file) {
+    // Implementation to handle file upload and save it to the desired location
+}
+```
+
+---
+
 These templates provide a structured way to document and troubleshoot common errors in an application, enhancing the efficiency of the development and support teams.
