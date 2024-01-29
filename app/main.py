@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from pydantic import BaseModel
 import logging
-
+import asyncio
+from datetime import datetime
+from oncall_agent import OnCallAgent
+from fastapi.encoders import jsonable_encoder
+import json
 # ----------------------------------------------------------------------------
 # FastAPI as main entrypoint of the app for consumption
 # ----------------------------------------------------------------------------
@@ -21,20 +24,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# ----------------------------------------------------------------------------
-# design goal: supply an intermediate proxy to RAG endpoint via fastAPI
-# ----------------------------------------------------------------------------
-
-# static response
-
-static_response = {
-    "text": "this response is static from the fastAPI nlg endpoint!",
-    "buttons": [],
-    "image": None,
-    "elements": [],
-    "attachments": []
-}
-
+oncall_gent = OnCallAgent()
 # ----------------------------------------------------------------------------
 # some initial endpoints
 # ----------------------------------------------------------------------------
@@ -43,99 +33,67 @@ static_response = {
 # root
 @app.get("/")
 async def root():
-    return static_response
-
-# listener for event emitter
-@app.get("/incident/")
-async def root():
-    return static_response
-
-# endpoint to trigger RAG pipeline
-@app.get("/retrieve/")
-async def root():
-    return static_response
-
-class FrontendError(BaseModel):
-    message: str
-    stack: str
-    info: dict  # Additional info if needed
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-
-# Endpoint to receive and log frontend errors
-@app.post("/log-frontend-error/")
-async def log_frontend_error(error: FrontendError):
-    # Log the error to a file
-    logging.error(f"Frontend Error: {error.message} | Stack: {error.stack} | Info: {error.info}")
-    logging.info("Calling on-call agent...")
-    await error_handler(error.message, error.stack)
-    return {"detail": "Error logged successfully"}
+    return "On-call agent is running"
 
 
-async def error_handler(error_message, error_stack):
-    # Log the error to a file
-    logging.info(f"Trying to resolve error: {error_message}")
-    logging.info(f"Searching mongoDB for: {error_message}")
-
-    solution = await mongoDB_vector_search(error_stack)
-    logging.info(f"Found Solution: {solution}")
-    logging.info("Found ")
-
-import os
-from dotenv import find_dotenv, dotenv_values
-config = dotenv_values(find_dotenv())
-
-api_key = os.getenv('OPENAI_API_KEY')
-ATLAS_URI = os.getenv('ATLAS_URI')
-DB_NAME = os.getenv('DB_NAME', default='devopsgpt')
-from OpenAIClient import OpenAIClient
-
-openAI_client = OpenAIClient (api_key=api_key)
-
-ATLAS_URI = os.getenv('ATLAS_URI')
-DB_NAME = os.getenv('DB_NAME', default='devopsgpt')
-from AtlasClient import AtlasClient
-import time
-
-def do_vector_search (query:str) -> None:
-    t1a = time.perf_counter()
-    embedding = openAI_client.get_embedding(query)
-    t1b = time.perf_counter()
-    print (f"Getting embeddings from OpenAI took {(t1b-t1a)*1000:,.0f} ms")
-    atlas_client = AtlasClient (ATLAS_URI, DB_NAME)
-    t2a = time.perf_counter()
-    reports = atlas_client.vector_search(collection_name="embeddings", index_name="report_index", attr_name='report_embedding', embedding_vector=embedding,limit=10 )
-    t2b = time.perf_counter()
-
-    print (f"Altas query returned {len (reports)} reports in {(t2b-t2a)*1000:,.0f} ms")
-    print(reports)
-
-    for idx, report in enumerate (reports):
-        print(idx)
-        print(report)
-        print(report['_id'])
-    return reports[0]['text']
-
-async def mongoDB_vector_search_fake(query):
-    # fake return load the file from local
-    with open("/Users/Lai/Documents/workspace/oncall-agent/reports/Add_to_cart_error.txt", "r") as f:
-        #return full file content
-        return f.read()
-
-async def mongoDB_vector_search(query):
-    return do_vector_search(query)
-
-# ----------------------------------------------------------------------------
-# enable post endpoint
-# ----------------------------------------------------------------------------
-
-# @app.post("/dynamic/")
-# async def request_gpt(nlg: incomplete):
-#     meta_response = static_response
-#     return meta_response
+# incident endpoint
+@app.post("/incident")
+async def process_incident(request: Request, incident_data: dict):
+    # Process the incident data here
+    # You can perform any necessary operations with the provided data
+    
+    # Get request information
+    ip_address = request.client.host
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Extract incident data
+    error_message = incident_data.get("error_message")
+    stack_trace = incident_data.get("stack_trace")
+    additional_info = incident_data.get("additional_info")
+    
+    # Print request information
+    logging.error(f"Received incident from:")
+    logging.error(f"IP Address: {ip_address}")
+    logging.error(f"Time: {current_time}")
+    
+    logging.error(f"Error Message: {error_message}")
+    logging.error(f"Stack Trace: {stack_trace}")
+    logging.error(f"Additional Info: {additional_info}")
+    
+    asyncio.create_task(handle_incident(error_message, stack_trace, additional_info))
+    # Return a response if needed
+    return {"message": "Incident handled successfully"}
 
 
-# ----------------------------------------------------------------------------
-# EOF
-# ----------------------------------------------------------------------------
+async def handle_incident(error_message, stack_trace, additional_info):
+    logging.warn(f"Oncall agent is invoked!")
+    response = oncall_gent.research_incident(error_message, stack_trace, additional_info)
+    root_cause = response.content[0].text.value
+    root_cause = root_cause.strip('`').strip('json').strip()
+    # Assuming `root_cause` is a JSON string
+    try:
+        root_cause_json = json.loads(root_cause)
+        # Do something with root_cause_json
+    except json.JSONDecodeError as e:
+        print("Failed to parse JSON. Error:", e)
+        print("Raw string:", root_cause)
+        return
+    except Exception as e:
+        print("An unexpected error occurred:", e)
+        return
+    # Access the values of the fields
+    file = root_cause_json['file']
+    area = root_cause_json['area']
+    instruction = root_cause_json['instruction']
+    report = root_cause_json['report_name']
+
+    # Do something with the values
+    print("Found solution based on this incident report:")
+    print(report)
+
+    # Read the report content and print it out
+    with open('../incident_reports/'+ report, 'r') as file:
+        report_content = file.read()
+        print("Report Content:")
+        print(report_content)
+    

@@ -1,0 +1,18 @@
+##Title: 
+Checkout url error
+
+## Error Name: 
+AxiosError: Network Error
+
+## Stack trace
+ERROR:root:Error Message: AxiosError
+ERROR:root:Stack Trace: AxiosError: Network Error
+    at XMLHttpRequest.handleError (webpack-internal:///(app-client)/./node_modules/axios/lib/adapters/xhr.js:172:14)
+ERROR:root:Additional Info: http://localhost:3000/api/4a41a355-030c-4c8d-ad8a-1d0b57c491b8/checskout
+
+
+## Solution
+Double check the url used to make the reqeust, correct any spelling error
+for example fix the spelling of checkout in url.
+the file to modify: app/(routes)/cart/components/summary.tsx
+area of focus: onCheckout
