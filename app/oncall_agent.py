@@ -1,15 +1,17 @@
 from openai import OpenAI
 import time
 from dotenv import find_dotenv, dotenv_values
+import os
 config = dotenv_values(find_dotenv())
 
 
 PROMPT = """
-You are oncall agent, you job is to help provide solution to incidents. You will be asked with specific errors, based on your knowledge files, tell the user how to fix the problem. Reply in the following json format. File is the file to modify, area is the area of focus in the file, instruction is detailed instruction on how to fix the error.
+You are oncall agent, you job is to help provide solution to incidents. You will be asked with specific errors, based on your knowledge files, tell the user how to fix the problem. Reply in the following json format. File is the file to modify, area is the area of focus in the file, instruction is detailed instruction on how to fix the error, report name is the knowledge file name you used to find the solution. If you are not certain about the error, reply sorry, I cant find any existing solution from incident reports.
 {
 file: string
 area: string
 instruction: string
+report_name: string
 }
 """
 
@@ -17,11 +19,23 @@ class OnCallAgent():
     def __init__(self):
         self.client = OpenAI(api_key=config['OPENAI_API_KEY'])
         if not config["ASSISTANT_ID"]:
+            directory = "../incident_reports"
+            file_ids = []
+
+            for filename in os.listdir(directory):
+                if os.path.isfile(os.path.join(directory, filename)):
+                    file = self.client.files.create(
+                        file=open(os.path.join(directory, filename), "rb"),
+                        purpose='assistants'
+                    )
+                    file_ids.append(file.id)
+            
             assistant = self.client.beta.assistants.create(
-                name="Math Tutor",
+                name="OncallAgent",
                 instructions=PROMPT,
-                tools=[],
-                model="gpt-4-turbo-preview"
+                tools=[{"type": "retrieval"}],
+                model="gpt-4-turbo-preview",
+                file_ids=file_ids
             )
             print(assistant)
             id = assistant.id
@@ -31,6 +45,7 @@ class OnCallAgent():
         else:
             self.assistant_id = config["ASSISTANT_ID"]
             print('using existing id: ', self.assistant_id)
+
 
     def research_incident(self, error_message, stack_trace, additional_info):
         print(f"Agent id {self.assistant_id} is researching on the incident...")
@@ -59,6 +74,3 @@ class OnCallAgent():
             thread_id=thread.id
         )
         return messages.data[0]
-
-    def add_files(self, files):
-        pass
