@@ -1,6 +1,5 @@
-fastapi
+fastapi[all]
 uvicorn
-langchain
 openai
-langchain-openai
-pymongo
+dotenv
+aider-chat

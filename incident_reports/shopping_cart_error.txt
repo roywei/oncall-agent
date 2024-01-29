@@ -1,0 +1,29 @@
+##Title: 
+Shopping cart is too busy
+
+## Error Name: 
+Sorry, shopping cart is too busy
+
+## Stack trace
+ERROR:root:Error Message: Error
+ERROR:root:Stack Trace: Error: Sorry, shopping cart is too busy
+    at Summary (webpack-internal:///(app-client)/./app/(routes)/cart/components/summary.tsx:43:11)
+    at renderWithHooks (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:10648:18)
+    at mountIndeterminateComponent (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:15731:13)
+    at beginWork$1 (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:17306:16)
+    at beginWork (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:25650:14)
+    at performUnitOfWork (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:24501:12)
+    at workLoopSync (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:24217:5)
+    at renderRootSync (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:24182:7)
+    at recoverFromConcurrentError (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:23428:20)
+    at performConcurrentWorkOnRoot (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:23334:22)
+    at workLoop (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:261:34)
+    at flushWork (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:230:14)
+    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-client)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:537:21)
+
+## Solution
+comment out the manually added exception
+throw new Error("Sorry, shopping cart is too busy");
+
+the file to modify: app/(routes)/cart/components/summary.tsx
+area of focus: const Summary = ()

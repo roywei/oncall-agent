@@ -1,2 +1,19 @@
-python_env/
-.env
+# Python
+*.pyc
+*__pycache__/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+*.egg
+*.env
+
+# FastAPI
+/.vscode
+/.idea
+/.venv
+/.mypy_cache
+/.pytest_cache
+/.coverage
+.aider*
